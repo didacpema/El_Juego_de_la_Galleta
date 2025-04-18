@@ -1,29 +1,82 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using TMPro;
+using System.Collections;
 
 public class CookieController : MonoBehaviour
 {
-    public long cookieCount = 0;
-    public TMPro.TextMeshProUGUI counterText;
+    public float cookieCount = 0;
+    public TextMeshProUGUI counterText;
+    public AudioSource clickSound;
+    public GameObject clickParticleEffect;
     
+    [Header("Click Animation")]
+    [Range(0.5f, 0.95f)]
+    public float clickShrinkSize = 0.8f;  // How small the cookie gets when clicked
+    [Range(0.05f, 0.5f)]
+    public float clickAnimDuration = 0.15f;  // Total animation duration
+    
+    private Vector3 originalScale;
+    private Coroutine scaleAnimation;
+
+    void Start()
+    {
+        originalScale = transform.localScale;
+    }
+
     public void OnCookieClicked(SelectEnterEventArgs args)
     {
         cookieCount++;
         UpdateCounterDisplay();
         
-        // Play particle effect, sound, or other feedback
-        transform.localScale = Vector3.one * 0.9f;
-        Invoke("ResetScale", 0.1f);
+        // Play feedback
+        if (clickSound) clickSound.Play();
+        if (clickParticleEffect) Instantiate(clickParticleEffect, transform.position, Quaternion.identity);
+        
+        // Cookie animation
+        if (scaleAnimation != null)
+            StopCoroutine(scaleAnimation);
+            
+        scaleAnimation = StartCoroutine(AnimateCookieClick());
     }
     
-    private void ResetScale()
+    IEnumerator AnimateCookieClick()
     {
-        transform.localScale = Vector3.one;
+        float elapsedTime = 0;
+        
+        // Shrink phase
+        while (elapsedTime < clickAnimDuration/2)
+        {
+            float t = elapsedTime / (clickAnimDuration/2);
+            float scale = Mathf.Lerp(1f, clickShrinkSize, t);
+            transform.localScale = originalScale * scale;
+            
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        // Expand phase
+        elapsedTime = 0;
+        while (elapsedTime < clickAnimDuration/2)
+        {
+            float t = elapsedTime / (clickAnimDuration/2);
+            float scale = Mathf.Lerp(clickShrinkSize, 1f, t);
+            transform.localScale = originalScale * scale;
+            
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        // Ensure we end at exactly the original scale
+        transform.localScale = originalScale;
+        scaleAnimation = null;
     }
     
-    private void UpdateCounterDisplay()
+    public void UpdateCounterDisplay()
     {
         if (counterText != null)
-            counterText.text = cookieCount.ToString();
+        {
+            counterText.text = cookieCount.ToString("N0");
+        }
     }
 }
