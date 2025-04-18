@@ -31,7 +31,32 @@ public class CookieController : MonoBehaviour
         
         // Play feedback
         if (clickSound) clickSound.Play();
-        if (clickParticleEffect) Instantiate(clickParticleEffect, transform.position, Quaternion.identity);
+        
+        // Handle particle effect with auto-cleanup
+        if (clickParticleEffect) 
+        {
+            GameObject particleInstance = Instantiate(clickParticleEffect, transform.position, Quaternion.identity);
+            
+            // Get the ParticleSystem component to determine its duration
+            ParticleSystem particleSystem = particleInstance.GetComponent<ParticleSystem>();
+            if (particleSystem != null)
+            {
+                // Calculate total duration (including stop time)
+                float totalDuration = particleSystem.main.duration;
+                if (particleSystem.main.loop)
+                {
+                    totalDuration = particleSystem.main.startLifetime.constant;
+                }
+                
+                // Add a small buffer to ensure all particles are finished
+                Destroy(particleInstance, totalDuration + 0.5f);
+            }
+            else
+            {
+                // If no particle system found, destroy after a default time
+                Destroy(particleInstance, 2.0f);
+            }
+        }
         
         // Cookie animation
         if (scaleAnimation != null)

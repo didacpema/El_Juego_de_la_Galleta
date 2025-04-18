@@ -157,9 +157,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1729,7 +1727,6 @@ MonoBehaviour:
   - {fileID: 7279467769842343898, guid: b1b37ac0eaa6a9a4785fc1f26065e8b3, type: 3}
   - {fileID: 3745605318107395163, guid: daca7e1cd0a975941a64a8a9cbd8e5e5, type: 3}
   - {fileID: 2668992677333385299, guid: 98cdacc32bf0d8d469092762a7263c4b, type: 3}
-  - {fileID: 5314704881504803589, guid: 7d63c858db86c84449196a37078862e9, type: 3}
   m_SpawnVisualizationPrefab: {fileID: 0}
   m_SpawnOptionIndex: 0
   m_OnlySpawnInView: 1
@@ -2605,6 +2602,12 @@ PrefabInstance:
       propertyPath: counterText
       value: 
       objectReference: {fileID: 27171176}
+    - target: {fileID: 6148349364106091336, guid: 7d63c858db86c84449196a37078862e9,
+        type: 3}
+      propertyPath: clickParticleEffect
+      value: 
+      objectReference: {fileID: 6665401147535124105, guid: d8e1516454cb0d069b4d5cfc8918a650,
+        type: 3}
     - target: {fileID: 7047776272283137665, guid: 7d63c858db86c84449196a37078862e9,
         type: 3}
       propertyPath: m_UseGravity
