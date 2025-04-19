@@ -2427,6 +2427,7 @@ GameObject:
   - component: {fileID: 817813620}
   - component: {fileID: 817813619}
   - component: {fileID: 817813618}
+  - component: {fileID: 817813621}
   m_Layer: 5
   m_Name: Button (Cursor)
   m_TagString: Untagged
@@ -2633,6 +2634,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 817813616}
   m_CullTransparentMesh: 1
+--- !u!114 &817813621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817813616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d24eabf79c278b5ae8340e9102f3bdf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upgradeId: cursor
+  costText: {fileID: 0}
+  nameText: {fileID: 0}
+  cpsText: {fileID: 0}
+  button: {fileID: 817813618}
+  interactable: {fileID: 0}
 --- !u!1 &820290883
 GameObject:
   m_ObjectHideFlags: 0
@@ -3010,6 +3029,7 @@ GameObject:
   - component: {fileID: 881873004}
   - component: {fileID: 881873003}
   - component: {fileID: 881873002}
+  - component: {fileID: 881873005}
   m_Layer: 5
   m_Name: Button (Grandma)
   m_TagString: Untagged
@@ -3216,6 +3236,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 881873000}
   m_CullTransparentMesh: 1
+--- !u!114 &881873005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881873000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d24eabf79c278b5ae8340e9102f3bdf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upgradeId: grandma
+  costText: {fileID: 0}
+  nameText: {fileID: 0}
+  cpsText: {fileID: 0}
+  button: {fileID: 881873002}
+  interactable: {fileID: 0}
 --- !u!1 &920969223
 GameObject:
   m_ObjectHideFlags: 0

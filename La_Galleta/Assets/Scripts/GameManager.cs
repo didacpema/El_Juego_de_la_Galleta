@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     
     private void Awake()
     {
-        // Singleton setup
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -59,13 +58,8 @@ public class GameManager : MonoBehaviour
             objectSpawner.objectSpawned += OnUpgradeObjectSpawned;
         }
 
-        // Find any existing upgrades in the scene
         FindExistingUpgrades();
-        
-        // Calculate initial CPS
         CalculateTotalCookiesPerSecond();
-        
-        // Update UI
         UpdateAllCounterDisplays();
     }
     
@@ -291,13 +285,24 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Recalculated CPS: {cookiesPerSecond}/s");
     }
     
-    // Method to get upgrade definition (for UpgradeBehavior to use)
     public UpgradeDefinition GetUpgradeDefinition(string upgradeId)
     {
         return availableUpgrades.Find(u => u.id == upgradeId);
     }
     
-    // Class to define upgrade types
+    public float GetUpgradeCost(string upgradeId)
+    {
+        UpgradeDefinition upgrade = availableUpgrades.Find(u => u.id == upgradeId);
+        if (upgrade == null) return float.MaxValue; // Return "infinity" if upgrade doesn't exist
+        
+        return CalculateUpgradeCost(upgrade);
+    }
+
+    public float GetTotalCookies()
+    {
+        return totalCookies;
+    }
+    
     [Serializable]
     public class UpgradeDefinition
     {
