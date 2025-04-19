@@ -1,12 +1,9 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using TMPro;
 using System.Collections;
 
 public class CookieController : MonoBehaviour
 {
-    public float cookieCount = 0;
-    public TextMeshProUGUI counterText;
     public AudioSource clickSound;
     public GameObject clickParticleEffect;
     
@@ -15,6 +12,10 @@ public class CookieController : MonoBehaviour
     public float clickShrinkSize = 0.8f;  // How small the cookie gets when clicked
     [Range(0.05f, 0.5f)]
     public float clickAnimDuration = 0.15f;  // Total animation duration
+    
+    // Used by GameManager to track cookies
+    [HideInInspector]
+    public float cookieCount = 0;
     
     private Vector3 originalScale;
     private Coroutine scaleAnimation;
@@ -26,8 +27,16 @@ public class CookieController : MonoBehaviour
 
     public void OnCookieClicked(SelectEnterEventArgs args)
     {
-        cookieCount++;
-        UpdateCounterDisplay();
+        // Add cookies to global counter instead of local counter
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddCookies(1);
+        }
+        else
+        {
+            // Fallback if GameManager isn't available
+            cookieCount++;
+        }
         
         // Play feedback
         if (clickSound) clickSound.Play();
@@ -95,13 +104,5 @@ public class CookieController : MonoBehaviour
         // Ensure we end at exactly the original scale
         transform.localScale = originalScale;
         scaleAnimation = null;
-    }
-    
-    public void UpdateCounterDisplay()
-    {
-        if (counterText != null)
-        {
-            counterText.text = cookieCount.ToString("N0");
-        }
     }
 }
