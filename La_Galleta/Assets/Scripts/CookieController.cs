@@ -14,9 +14,7 @@ public class CookieController : MonoBehaviour
     public float clickAnimDuration = 0.15f;  // Total animation duration
     
     // Used by GameManager to track cookies
-    [HideInInspector]
-    public float cookieCount = 0;
-    
+    [HideInInspector]    
     private Vector3 originalScale;
     private Coroutine scaleAnimation;
 
@@ -31,11 +29,6 @@ public class CookieController : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddCookies(1);
-        }
-        else
-        {
-            // Fallback if GameManager isn't available
-            cookieCount++;
         }
         
         // Play feedback

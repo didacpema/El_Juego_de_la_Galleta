@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets;
+using UnityEngine;
 using System;
 using TMPro;
 
@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI mainCounterText;
-    [SerializeField] private List<TextMeshProUGUI> additionalCounterTexts = new List<TextMeshProUGUI>();
     [SerializeField] private TextMeshProUGUI cookiesPerSecondText;
     
     [Header("Upgrades Configuration")]
@@ -21,54 +20,50 @@ public class GameManager : MonoBehaviour
     [Header("Runtime Data")]
     [SerializeField] private float totalCookies = 0;
     [SerializeField] private float cookiesPerSecond = 0;
-    private Dictionary<string, int> purchasedUpgrades = new Dictionary<string, int>();
-    private Dictionary<string, List<GameObject>> activeUpgradeObjects = new Dictionary<string, List<GameObject>>();
+    
+    private Dictionary<string, List<GameObject>> activeUpgrades = new Dictionary<string, List<GameObject>>();
     
     public static GameManager Instance { get; private set; }
     
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-        
-        // Initialize upgrade tracking
-        foreach (var upgrade in availableUpgrades)
-        {
-            purchasedUpgrades[upgrade.id] = 0;
-            activeUpgradeObjects[upgrade.id] = new List<GameObject>();
-        }
+        SetupSingleton();
+        InitializeUpgrades();
     }
     
     private void Start()
     {
-        if (cookieController != null)
-        {
-            // Subscribe to cookie click events to track cookies
-            totalCookies = cookieController.cookieCount;
-        }
-        
         if (objectSpawner != null)
         {
-            // Subscribe to object spawned event to track new upgrades
             objectSpawner.objectSpawned += OnUpgradeObjectSpawned;
         }
 
         FindExistingUpgrades();
-        CalculateTotalCookiesPerSecond();
-        UpdateAllCounterDisplays();
+        UpdateGameState();
     }
     
     private void Update()
     {
-        // Check for destroyed upgrade objects
-        CheckForDestroyedUpgrades();
+        if (CheckForDestroyedUpgrades())
+        {
+            UpdateGameState();
+        }
         
-        // Generate cookies based on time and CPS
+        GenerateCookies();
+    }
+
+    #region Core Game Functions
+    
+    public void AddCookies(float amount)
+    {
+        totalCookies += amount;
+        UpdateUI();
+    }
+    
+    public float GetTotalCookies() => totalCookies;
+    
+    private void GenerateCookies()
+    {
         float cookiesGenerated = cookiesPerSecond * Time.deltaTime;
         if (cookiesGenerated > 0)
         {
@@ -76,213 +71,39 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    private void FindExistingUpgrades()
-    {
-        // Find all UpgradeBehavior components in the scene
-        UpgradeBehavior[] existingUpgrades = FindObjectsOfType<UpgradeBehavior>();
-        
-        foreach (var upgrade in existingUpgrades)
-        {
-            // Register each existing upgrade
-            RegisterUpgrade(upgrade.gameObject, upgrade.upgradeId);
-        }
-    }
+    #endregion
     
-    private void CheckForDestroyedUpgrades()
-    {
-        bool needsRecalculation = false;
-        
-        // Check each type of upgrade
-        foreach (var entry in activeUpgradeObjects)
-        {
-            string upgradeId = entry.Key;
-            List<GameObject> upgradesList = entry.Value;
-            
-            // Check if any objects were destroyed
-            for (int i = upgradesList.Count - 1; i >= 0; i--)
-            {
-                if (upgradesList[i] == null)
-                {
-                    // Object was destroyed, remove it from our list
-                    upgradesList.RemoveAt(i);
-                    needsRecalculation = true;
-                }
-            }
-            
-            // Update the count in purchasedUpgrades for consistency
-            purchasedUpgrades[upgradeId] = upgradesList.Count;
-        }
-        
-        // Recalculate CPS if needed
-        if (needsRecalculation)
-        {
-            CalculateTotalCookiesPerSecond();
-            UpdateAllCounterDisplays();
-        }
-    }
-    
-    public void AddCookies(float amount)
-    {
-        totalCookies += amount;
-        
-        // Update cookie controller's internal counter
-        if (cookieController != null)
-        {
-            cookieController.cookieCount = totalCookies;
-        }
-        
-        // Update all UI elements
-        UpdateAllCounterDisplays();
-    }
-    
-    public void UpdateAllCounterDisplays()
-    {
-        // Format the cookie count with thousands separators
-        string formattedCount = totalCookies.ToString("N0");
-        
-        // Update the main counter text if assigned
-        if (mainCounterText != null)
-        {
-            mainCounterText.text = formattedCount;
-        }
-        
-        // Update any additional counter texts
-        foreach (var counterText in additionalCounterTexts)
-        {
-            if (counterText != null)
-            {
-                counterText.text = formattedCount;
-            }
-        }
-        
-        // Update cookies per second display if available
-        if (cookiesPerSecondText != null)
-        {
-            cookiesPerSecondText.text = $"{cookiesPerSecond:F1}/s";
-        }
-    }
+    #region Upgrade Management
     
     public bool CanAffordUpgrade(string upgradeId)
     {
-        UpgradeDefinition upgrade = availableUpgrades.Find(u => u.id == upgradeId);
-        if (upgrade == null) return false;
-        
-        float cost = CalculateUpgradeCost(upgrade);
-        return totalCookies >= cost;
+        float cost = GetUpgradeCost(upgradeId);
+        return totalCookies >= cost && cost < float.MaxValue;
     }
     
     public bool PurchaseUpgrade(string upgradeId, Vector3 spawnPosition, Vector3 spawnNormal)
     {
-        UpgradeDefinition upgrade = availableUpgrades.Find(u => u.id == upgradeId);
+        float cost = GetUpgradeCost(upgradeId);
+        
+        if (totalCookies < cost) return false;
+        
+        UpgradeDefinition upgrade = GetUpgradeDefinition(upgradeId);
         if (upgrade == null) return false;
         
-        float cost = CalculateUpgradeCost(upgrade);
+        // Deduct cookies
+        totalCookies -= cost;
         
-        if (totalCookies >= cost)
+        // Spawn the upgrade object
+        objectSpawner.spawnOptionIndex = availableUpgrades.IndexOf(upgrade);
+        bool success = objectSpawner.TrySpawnObject(spawnPosition, spawnNormal);
+        
+        if (success)
         {
-            // Deduct cookies
-            totalCookies -= cost;
-            
-            // Update cookie controller's internal counter
-            if (cookieController != null)
-            {
-                cookieController.cookieCount = totalCookies;
-            }
-            
-            // Spawn the upgrade object
-            int upgradeIndex = availableUpgrades.IndexOf(upgrade);
-            objectSpawner.spawnOptionIndex = upgradeIndex;
-            
-            bool success = objectSpawner.TrySpawnObject(spawnPosition, spawnNormal);
-            
-            if (success)
-            {
-                // The ObjectSpawner.objectSpawned event will handle registering the upgrade
-                // through the OnUpgradeObjectSpawned method
-                
-                // Update UI
-                UpdateAllCounterDisplays();
-                
-                return true;
-            }
+            UpdateUI();
+            return true;
         }
         
         return false;
-    }
-    
-    private void OnUpgradeObjectSpawned(GameObject spawnedObject)
-    {
-        // Try to find an UpgradeBehavior component on the spawned object
-        UpgradeBehavior upgradeBehavior = spawnedObject.GetComponent<UpgradeBehavior>();
-        
-        if (upgradeBehavior != null)
-        {
-            string upgradeId = upgradeBehavior.upgradeId;
-            RegisterUpgrade(spawnedObject, upgradeId);
-        }
-    }
-    
-    private void RegisterUpgrade(GameObject upgradeObject, string upgradeId)
-    {
-        // Verify the upgrade ID is valid
-        UpgradeDefinition upgradeDef = availableUpgrades.Find(u => u.id == upgradeId);
-        if (upgradeDef == null)
-        {
-            Debug.LogWarning($"Unknown upgrade ID: {upgradeId}");
-            return;
-        }
-        
-        // Add to active objects list
-        if (!activeUpgradeObjects.ContainsKey(upgradeId))
-        {
-            activeUpgradeObjects[upgradeId] = new List<GameObject>();
-        }
-        
-        activeUpgradeObjects[upgradeId].Add(upgradeObject);
-        
-        // Update purchased count for consistency
-        if (!purchasedUpgrades.ContainsKey(upgradeId))
-        {
-            purchasedUpgrades[upgradeId] = 0;
-        }
-        purchasedUpgrades[upgradeId] = activeUpgradeObjects[upgradeId].Count;
-        
-        // Recalculate CPS
-        CalculateTotalCookiesPerSecond();
-        
-        // Update UI
-        UpdateAllCounterDisplays();
-        
-        Debug.Log($"Registered upgrade: {upgradeId}. Total active: {activeUpgradeObjects[upgradeId].Count}");
-    }
-    
-    private float CalculateUpgradeCost(UpgradeDefinition upgrade)
-    {
-        int count = 0;
-        if (activeUpgradeObjects.ContainsKey(upgrade.id))
-        {
-            count = activeUpgradeObjects[upgrade.id].Count;
-        }
-        
-        // Apply cost scaling based on how many of this upgrade are already in the scene
-        return upgrade.baseCost * Mathf.Pow(upgrade.costScalingFactor, count);
-    }
-    
-    private void CalculateTotalCookiesPerSecond()
-    {
-        cookiesPerSecond = 0;
-        
-        // Calculate based on active upgrade objects instead of purchasedUpgrades
-        foreach (var upgrade in availableUpgrades)
-        {
-            if (activeUpgradeObjects.ContainsKey(upgrade.id))
-            {
-                int count = activeUpgradeObjects[upgrade.id].Count;
-                cookiesPerSecond += count * upgrade.cookiesPerSecond;
-            }
-        }
-        
-        Debug.Log($"Recalculated CPS: {cookiesPerSecond}/s");
     }
     
     public UpgradeDefinition GetUpgradeDefinition(string upgradeId)
@@ -292,16 +113,143 @@ public class GameManager : MonoBehaviour
     
     public float GetUpgradeCost(string upgradeId)
     {
-        UpgradeDefinition upgrade = availableUpgrades.Find(u => u.id == upgradeId);
-        if (upgrade == null) return float.MaxValue; // Return "infinity" if upgrade doesn't exist
+        UpgradeDefinition upgrade = GetUpgradeDefinition(upgradeId);
+        if (upgrade == null) return float.MaxValue;
         
-        return CalculateUpgradeCost(upgrade);
+        int count = GetUpgradeCount(upgradeId);
+        return upgrade.baseCost * Mathf.Pow(upgrade.costScalingFactor, count);
     }
-
-    public float GetTotalCookies()
+    
+    private int GetUpgradeCount(string upgradeId)
     {
-        return totalCookies;
+        return activeUpgrades.TryGetValue(upgradeId, out List<GameObject> upgrades) ? upgrades.Count : 0;
     }
+    
+    #endregion
+    
+    #region Initialization and Setup
+    
+    private void SetupSingleton()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+    
+    private void InitializeUpgrades()
+    {
+        foreach (var upgrade in availableUpgrades)
+        {
+            activeUpgrades[upgrade.id] = new List<GameObject>();
+        }
+    }
+    
+    private void FindExistingUpgrades()
+    {
+        UpgradeBehavior[] existingUpgrades = FindObjectsOfType<UpgradeBehavior>();
+        
+        foreach (var upgrade in existingUpgrades)
+        {
+            RegisterUpgrade(upgrade.gameObject, upgrade.upgradeId);
+        }
+    }
+    
+    #endregion
+    
+    #region Update Handlers
+    
+    private void OnUpgradeObjectSpawned(GameObject spawnedObject)
+    {
+        UpgradeBehavior upgradeBehavior = spawnedObject.GetComponent<UpgradeBehavior>();
+        
+        if (upgradeBehavior != null)
+        {
+            RegisterUpgrade(spawnedObject, upgradeBehavior.upgradeId);
+        }
+    }
+    
+    private void RegisterUpgrade(GameObject upgradeObject, string upgradeId)
+    {
+        UpgradeDefinition upgradeDef = GetUpgradeDefinition(upgradeId);
+        if (upgradeDef == null)
+        {
+            Debug.LogWarning($"Unknown upgrade ID: {upgradeId}");
+            return;
+        }
+        
+        if (!activeUpgrades.ContainsKey(upgradeId))
+        {
+            activeUpgrades[upgradeId] = new List<GameObject>();
+        }
+        
+        activeUpgrades[upgradeId].Add(upgradeObject);
+        UpdateGameState();
+        
+        Debug.Log($"Registered upgrade: {upgradeId}. Total active: {activeUpgrades[upgradeId].Count}");
+    }
+    
+    private bool CheckForDestroyedUpgrades()
+    {
+        bool upgradesChanged = false;
+        
+        foreach (var entry in activeUpgrades)
+        {
+            List<GameObject> upgradesList = entry.Value;
+            
+            for (int i = upgradesList.Count - 1; i >= 0; i--)
+            {
+                if (upgradesList[i] == null)
+                {
+                    upgradesList.RemoveAt(i);
+                    upgradesChanged = true;
+                }
+            }
+        }
+        
+        return upgradesChanged;
+    }
+    
+    #endregion
+    
+    #region State and UI Updates
+    
+    private void UpdateGameState()
+    {
+        CalculateTotalCookiesPerSecond();
+        UpdateUI();
+    }
+    
+    private void CalculateTotalCookiesPerSecond()
+    {
+        cookiesPerSecond = 0;
+        
+        foreach (var upgrade in availableUpgrades)
+        {
+            int count = GetUpgradeCount(upgrade.id);
+            cookiesPerSecond += count * upgrade.cookiesPerSecond;
+        }
+        
+        Debug.Log($"Recalculated CPS: {cookiesPerSecond}/s");
+    }
+    
+    private void UpdateUI()
+    {
+        if (mainCounterText != null)
+        {
+            mainCounterText.text = totalCookies.ToString("N0");
+        }
+        
+        if (cookiesPerSecondText != null)
+        {
+            cookiesPerSecondText.text = $"{cookiesPerSecond:F1}/s";
+        }
+    }
+    
+    #endregion
     
     [Serializable]
     public class UpgradeDefinition
@@ -310,7 +258,7 @@ public class GameManager : MonoBehaviour
         public string displayName;
         public float baseCost;
         public float cookiesPerSecond;
-        public float costScalingFactor = 1.15f; // Price increases by 15% each purchase
+        public float costScalingFactor = 1.15f;
         public GameObject prefab;
     }
 }
