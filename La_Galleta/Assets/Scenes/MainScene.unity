@@ -1670,21 +1670,21 @@ MonoBehaviour:
     displayName: Cursor
     baseCost: 10
     cookiesPerSecond: 1
-    costScalingFactor: 5
+    costScalingFactor: 2
     prefab: {fileID: 5314704881504803589, guid: 7d63c858db86c84449196a37078862e9,
       type: 3}
   - id: grandma
     displayName: Grandma
     baseCost: 50
     cookiesPerSecond: 5
-    costScalingFactor: 10
+    costScalingFactor: 3
     prefab: {fileID: 8986328500875594450, guid: 47a07ea241b3ef92fa5d09060bb145f9,
       type: 3}
   - id: farm
     displayName: Farm
     baseCost: 100
     cookiesPerSecond: 10
-    costScalingFactor: 100
+    costScalingFactor: 5
     prefab: {fileID: 5314704881504803589, guid: 7d63c858db86c84449196a37078862e9,
       type: 3}
   totalCookies: 0
