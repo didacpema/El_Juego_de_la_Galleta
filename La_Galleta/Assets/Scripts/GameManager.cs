@@ -46,11 +46,6 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
-        if (cookieController != null)
-        {
-            // Subscribe to cookie click events to track cookies
-            totalCookies = cookieController.cookieCount;
-        }
         
         if (objectSpawner != null)
         {
@@ -125,12 +120,6 @@ public class GameManager : MonoBehaviour
     {
         totalCookies += amount;
         
-        // Update cookie controller's internal counter
-        if (cookieController != null)
-        {
-            cookieController.cookieCount = totalCookies;
-        }
-        
         // Update all UI elements
         UpdateAllCounterDisplays();
     }
@@ -182,12 +171,6 @@ public class GameManager : MonoBehaviour
         {
             // Deduct cookies
             totalCookies -= cost;
-            
-            // Update cookie controller's internal counter
-            if (cookieController != null)
-            {
-                cookieController.cookieCount = totalCookies;
-            }
             
             // Spawn the upgrade object
             int upgradeIndex = availableUpgrades.IndexOf(upgrade);
