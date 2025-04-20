@@ -35,7 +35,7 @@ ModelImporter:
       name: material005_baseColor
     second: {fileID: 2800000, guid: 678047abd5c80917b954ec4e0735b593, type: 3}
   materials:
-    materialImportMode: 1
+    materialImportMode: 2
     materialName: 0
     materialSearch: 1
     materialLocation: 1
