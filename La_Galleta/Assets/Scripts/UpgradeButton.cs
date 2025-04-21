@@ -70,22 +70,6 @@ public class UpgradeButton : MonoBehaviour
         if (GameManager.Instance == null)
             return;
             
-        // Get player's position as the spawn point (or use a predefined spawn area)
-        Vector3 spawnPosition = Camera.main.transform.position + Camera.main.transform.forward * 1.5f;
-        Vector3 spawnNormal = Vector3.up; // Usually we want upgrades to orient upward
-        
-        // Try to purchase the upgrade
-        bool success = GameManager.Instance.PurchaseUpgrade(upgradeId, spawnPosition, spawnNormal);
-        
-        if (success)
-        {
-            // Optional: Add purchase success feedback (sound, particles, etc.)
-            Debug.Log($"Successfully purchased {upgradeId}");
-        }
-        else
-        {
-            // Optional: Add purchase failure feedback
-            Debug.Log($"Failed to purchase {upgradeId}");
-        }
+        GameManager.Instance.SelectUpgrade(upgradeId);
     }
 }
