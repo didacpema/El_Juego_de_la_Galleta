@@ -1,9 +1,29 @@
 fileFormatVersion: 2
-guid: e8f168f135c27474ab449b94e759b80d
+guid: c616cdfc0e8f5425bae8c729488b8f44
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 004_Cookies_low_DefaultMaterial_BaseColor
+    second: {fileID: 2800000, guid: e6e0bae6b528eeed5b48d405f4784de2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 004_Cookies_low_DefaultMaterial_Metallic
+    second: {fileID: 2800000, guid: 5842a3813818c62b795de3e80e5da540, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 004_Cookies_low_DefaultMaterial_Normal
+    second: {fileID: 2800000, guid: 2e7cd8dc9472b3b149bd1d36b97f6f1b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: 004_Cookies_low_DefaultMaterial_Roughness
+    second: {fileID: 2800000, guid: 09487e21ae8e420d18686cd3d44ea8b3, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -16,8 +36,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
