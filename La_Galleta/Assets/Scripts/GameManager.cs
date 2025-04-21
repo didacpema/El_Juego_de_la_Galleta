@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
         if (objectSpawner != null)
         {
             objectSpawner.objectSpawned += OnUpgradeObjectSpawned;
+            objectSpawner.spawnValidationCallback = ValidateUpgradeSpawn;
         }
 
         FindExistingUpgrades();
@@ -250,6 +251,25 @@ public class GameManager : MonoBehaviour
     }
     
     #endregion
+    
+    private bool ValidateUpgradeSpawn(int spawnOptionIndex)
+    {
+        if (spawnOptionIndex < 0 || spawnOptionIndex >= availableUpgrades.Count)
+            return true; // Random spawn or out of range, allow it
+            
+        string upgradeId = availableUpgrades[spawnOptionIndex].id;
+        float cost = GetUpgradeCost(upgradeId);
+        
+        bool canAfford = totalCookies >= cost;
+        
+        if (!canAfford)
+        {
+            // Optionally show feedback that player can't afford the upgrade
+            Debug.Log($"Cannot afford upgrade {upgradeId}: Cost {cost}, Have {totalCookies}");
+        }
+        
+        return canAfford;
+    }
     
     [Serializable]
     public class UpgradeDefinition

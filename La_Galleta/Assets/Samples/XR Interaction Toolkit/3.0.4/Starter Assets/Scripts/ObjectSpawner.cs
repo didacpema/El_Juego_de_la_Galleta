@@ -153,6 +153,16 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
         public event Action<GameObject> objectSpawned;
 
         /// <summary>
+        /// Delegate for validating spawn options.
+        /// </summary>
+        public delegate bool SpawnValidationDelegate(int spawnOptionIndex);
+
+        /// <summary>
+        /// Callback for validating spawn options.
+        /// </summary>
+        public SpawnValidationDelegate spawnValidationCallback;
+
+        /// <summary>
         /// See <see cref="MonoBehaviour"/>.
         /// </summary>
         void Awake()
@@ -205,6 +215,12 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
             }
 
             var objectIndex = isSpawnOptionRandomized ? Random.Range(0, m_ObjectPrefabs.Count) : m_SpawnOptionIndex;
+
+            if (spawnValidationCallback != null && !spawnValidationCallback(objectIndex))
+            {
+                return false;
+            }
+
             var newObject = Instantiate(m_ObjectPrefabs[objectIndex]);
             if (m_SpawnAsChildren)
                 newObject.transform.parent = transform;
