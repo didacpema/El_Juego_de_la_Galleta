@@ -1418,8 +1418,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CameraToFace: {fileID: 0}
   m_ObjectPrefabs:
-  - {fileID: 8986328500875594450, guid: d825bbdf58c379d4290da92e387f71d0, type: 3}
-  - {fileID: 8986328500875594450, guid: 47a07ea241b3ef92fa5d09060bb145f9, type: 3}
+  - {fileID: 6665401147535124105, guid: d8e1516454cb0d069b4d5cfc8918a650, type: 3}
+  - {fileID: 7166496023446111984, guid: ae3f2da26040f3745897dcdaa5d45f2e, type: 3}
+  - {fileID: 3788101375098074739, guid: 2ab5d2ea180af8840ad4ee82acbd0445, type: 3}
+  - {fileID: 5498692578174169809, guid: 30fcf6f6a27a39343b9e3f2848f9f4ea, type: 3}
   m_SpawnVisualizationPrefab: {fileID: 0}
   m_SpawnOptionIndex: 0
   m_OnlySpawnInView: 1
@@ -1529,21 +1531,21 @@ MonoBehaviour:
     baseCost: 10
     cookiesPerSecond: 1
     costScalingFactor: 2
-    prefab: {fileID: 5314704881504803589, guid: 7d63c858db86c84449196a37078862e9,
+    prefab: {fileID: 5498692578174169809, guid: 30fcf6f6a27a39343b9e3f2848f9f4ea,
       type: 3}
   - id: grandma
     displayName: Grandma
     baseCost: 50
     cookiesPerSecond: 5
     costScalingFactor: 3
-    prefab: {fileID: 8986328500875594450, guid: 47a07ea241b3ef92fa5d09060bb145f9,
+    prefab: {fileID: 7166496023446111984, guid: ae3f2da26040f3745897dcdaa5d45f2e,
       type: 3}
   - id: farm
     displayName: Farm
     baseCost: 100
     cookiesPerSecond: 10
     costScalingFactor: 5
-    prefab: {fileID: 5314704881504803589, guid: 7d63c858db86c84449196a37078862e9,
+    prefab: {fileID: 3788101375098074739, guid: 2ab5d2ea180af8840ad4ee82acbd0445,
       type: 3}
   totalCookies: 0
   cookiesPerSecond: 0
@@ -3597,8 +3599,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d24eabf79c278b5ae8340e9102f3bdf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeId: grandma
-  costText: {fileID: 0}
+  upgradeId: farm
+  costText: {fileID: 587810398}
   nameText: {fileID: 156801258}
   cpsText: {fileID: 0}
   button: {fileID: 894334440}
@@ -3654,7 +3656,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
