@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4683340796464951481}
   - component: {fileID: -4974811773143354240}
   - component: {fileID: -1800744913699579780}
+  - component: {fileID: 5096644027884744460}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -277,3 +278,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   upgradeId: cursor
+--- !u!135 &5096644027884744460
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5498692578174169809}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.10823837
+  m_Center: {x: -0.014602136, y: 0.005051128, z: 0.09139183}

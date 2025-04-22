@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1947668028305488619}
   - component: {fileID: 2321351207956464949}
   - component: {fileID: 4793468076672181384}
+  - component: {fileID: 4543990633180082167}
   m_Layer: 0
   m_Name: Farm
   m_TagString: Untagged
@@ -277,3 +278,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   upgradeId: farm
+--- !u!136 &4543990633180082167
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3788101375098074739}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.16
+  m_Height: 0.6671479
+  m_Direction: 1
+  m_Center: {x: 0.01, y: 0.3319806, z: 0}
