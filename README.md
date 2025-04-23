@@ -55,5 +55,5 @@ For detailed information about the project, including architecture, implementati
 
 ## License
 
-- This project is under the MIT license
+- This project is under the Apache License Version 2.0
 - Special thanks to the original Cookie Clicker game for inspiration
