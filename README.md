@@ -1,2 +1,2 @@
 # El_Juego_de_la_Galleta
-Click click click...
+Es un juego en realidad augmentada de clicar hasta morir!
